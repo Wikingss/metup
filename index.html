@@ -197,6 +197,24 @@
         .cta-button { background: var(--glow-color); color: #000; border: none; border-radius: 50px; padding: 1rem 3rem; font-size: 1.4rem; font-weight: 700; cursor: pointer; text-transform: uppercase; text-decoration: none; margin-top: 2rem; display: inline-block; box-shadow: var(--neon-glow); transition: all 0.3s; }
         .cta-button:hover, .cta-button:focus { transform: scale(1.05); box-shadow: 0 0 15px var(--glow-color), 0 0 40px var(--glow-color), 0 0 80px var(--glow-color); }
 
+        /* Particle Snow */
+        #particle-container {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 999;
+        }
+        .particle {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: fall linear infinite;
+            opacity: 0;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) scale(1); opacity: 1; }
+            100% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+        }
+
         /* Footer */
         #main-footer { background: #0a0a0a; color: #888; padding: 3rem 2rem; text-align: center; font-size: 0.9rem; scroll-snap-align: end; }
         #meetly-stories { margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; }
@@ -412,6 +430,23 @@
             }, 5000);
         }
 
+        // --- PARTICLE SNOW ---
+        if (!reducedMotion) {
+            const particleContainer = document.getElementById('particle-container');
+            const particleCount = 50;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 3 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particleContainer.appendChild(particle);
+            }
+        }
+
         // --- The rest of the scripts from before ---
         const cookieBanner = document.getElementById('cookie-banner');
         const cookieAccept = document.getElementById('cookie-accept');
@@ -522,22 +557,6 @@
             showBubble();
             setInterval(cycleNotifications, 4000);
         }, 3000);
-
-        if (!reducedMotion) {
-            const particleContainer = document.getElementById('particle-container');
-            const particleCount = 40;
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = Math.random() * 2.5 + 1;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.animationDuration = `${Math.random() * 10 + 8}s`;
-                particle.style.animationDelay = `${Math.random() * 10}s`;
-                particleContainer.appendChild(particle);
-            }
-        }
 
         const cursorGlow = document.getElementById('cursor-glow');
         if (cursorGlow && 'ontouchstart' in window === false) {

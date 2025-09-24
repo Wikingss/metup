@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cennik – Meetly Now</title>
-    <meta name="description" content="Poznaj plany cenowe aplikacji Meetly Now. Zacznij za darmo lub wybierz opcję Premium, aby uzyskać dostęp do dodatkowych funkcji.">
+    <title>Wybierz Plan – Meetly Now</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <meta name="description" content="Wybierz subskrypcję Meetly Now Premium i odblokuj wszystkie funkcje. Płatności miesięczne lub roczne.">
     <meta name="theme-color" content="#000000">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='%2300ffff' stroke-width='10'/%3E%3C/svg%3E">
     <style>
@@ -12,7 +13,9 @@
             --bg-dark: #0a0a0a;
             --bg-card: #1a1a1a;
             --border-color: rgba(255, 255, 255, 0.1);
-            --neon-glow: 0 0 8px rgba(0, 255, 255, 0.9), 0 0 20px rgba(0, 255, 255, 0.7), 0 0 40px rgba(0, 255, 255, 0.5);
+            --glow-color: #00ffff;
+            --accent-color: #ff00ff;
+            --error-color: #ff4d4d;
         }
         body {
             background-color: var(--bg-dark);
@@ -20,203 +23,195 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
             padding: 2rem;
-        }
-        .container {
-            max-width: 900px;
-            margin: 2rem auto;
-        }
-        h1, h2 {
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        h1 { color: #00ffff; }
-        .pricing-wrapper { 
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem; 
-            margin-top: 3rem;
-        }
-        .price-card {
-            background: var(--bg-card);
-            padding: 2.5rem;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            transition: transform 0.3s, box-shadow 0.3s;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        .price-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .price-card h3 { color: #00ffff; font-size: 1.8rem; }
-        .price-card .price { font-size: 3.5rem; font-weight: 700; margin: 1rem 0; }
-        .price-card ul {
-            list-style: none;
-            margin: 2rem 0;
-            text-align: left;
-            flex-grow: 1;
-        }
-        .price-card li {
-            margin-bottom: 1rem;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-        .price-card li::before {
-            content: '✔';
-            color: #00ffff;
-            position: absolute;
-            left: 0;
-        }
-        .cta-button {
-            background: #00ffff;
-            color: #000;
-            border: none;
-            border-radius: 50px;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-            text-decoration: none;
-            box-shadow: var(--neon-glow);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: inline-block;
-            text-align: center;
-            margin-top: auto;
-        }
-        .cta-button:hover { 
-            transform: scale(1.05); 
-            box-shadow: 0 0 10px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.6);
-        }
-        .back-link {
-            display: block;
-            margin-top: 3rem;
-            text-align: center;
-        }
-        .back-link a {
-            color: #aaa;
-            text-decoration: none;
-        }
-        .back-link a:hover {
-            color: #fff;
-        }
-
-        /* Gamified Waiting List */
-        #premium-early-access {
-            margin-top: auto;
-            text-align: center;
-        }
-        #charge-button {
-            background: #ff00ff;
-            color: #fff;
-            box-shadow: 0 0 15px #ff00ff;
-            border: none;
-            border-radius: 50px;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
+        .checkout-container {
             width: 100%;
-            transition: all 0.2s;
-        }
-        #charge-button:active {
-            transform: scale(0.95);
-        }
-        #progress-bar-container {
-            width: 100%;
-            height: 10px;
-            background: #333;
-            border-radius: 5px;
-            margin: 1rem 0;
+            max-width: 500px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
             overflow: hidden;
         }
-        #progress-bar {
-            width: 0%;
-            height: 100%;
-            background: #ff00ff;
-            border-radius: 5px;
-            transition: width 0.2s linear;
-        }
-        #early-access-form {
-            display: none;
-            margin-top: 1rem;
-        }
-        #early-access-form input {
-            width: 100%;
-            padding: 0.8rem;
-            border-radius: 5px;
-            border: 1px solid #555;
-            background: #222;
-            color: #fff;
-            margin-bottom: 0.5rem;
-        }
-        #early-access-form button {
-            width: 100%;
-        }
-
+        .header { padding: 2rem; text-align: center; border-bottom: 1px solid var(--border-color); }
+        h1 { color: var(--glow-color); font-size: 2rem; }
+        .billing-toggle { display: flex; justify-content: center; padding: 1rem; gap: 1rem; align-items: center; }
+        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 28px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--glow-color); }
+        input:checked + .slider:before { transform: translateX(22px); }
+        .plan-details { padding: 2rem; }
+        .price-display { text-align: center; margin-bottom: 2rem; }
+        .price-display .price { font-size: 3.5rem; font-weight: 700; color: var(--glow-color); }
+        .price-display .period { font-size: 1rem; opacity: 0.7; }
+        .savings { text-align: center; color: var(--accent-color); font-weight: bold; height: 20px; transition: opacity 0.3s; }
+        .payment-form { padding: 2rem; background: #111; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; opacity: 0.8; }
+        input[type="email"] { width: 100%; padding: 0.8rem; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; font-size: 1rem; }
+        #card-element { padding: 1rem; border: 1px solid #444; border-radius: 5px; background: #222; }
+        #card-errors { color: var(--error-color); font-size: 0.9rem; margin-top: 10px; height: 20px; }
+        .submit-btn { width: 100%; padding: 1rem; font-size: 1.2rem; font-weight: bold; color: #000; background: var(--glow-color); border: none; border-radius: 5px; cursor: pointer; transition: all 0.2s; opacity: 1; }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .submit-btn:hover:not(:disabled) { filter: brightness(1.2); }
+        .success-message { display: none; text-align: center; padding: 3rem 2rem; }
+        .success-message h2 { color: var(--glow-color); }
+        #license-key { font-family: monospace; background: #333; padding: 0.5rem 1rem; border-radius: 5px; margin-top: 1rem; display: inline-block; word-break: break-all; }
+        .back-link { display: block; margin-top: 2rem; text-align: center; color: #aaa; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Cennik</h1>
-        <h2>Zacznij za darmo. Na zawsze.</h2>
-        <div class="pricing-wrapper">
-            <div class="price-card">
-                <h3>Free</h3>
-                <div class="price">0 zł</div>
-                <ul>
-                    <li>Nielimitowane dołączanie do spotkań</li>
-                    <li>Tworzenie własnych spotkań</li>
-                    <li>Podstawowe filtry wyszukiwania</li>
-                    <li>Dostęp do mapy wydarzeń</li>
-                </ul>
-                <a href="index.html#story4" class="cta-button">Pobierz aplikację</a>
+    <div class="checkout-container">
+        <div id="payment-view">
+            <div class="header">
+                <h1>Meetly Premium</h1>
             </div>
-            <div class="price-card">
-                <h3>Premium</h3>
-                <div class="price">Wkrótce</div>
-                <ul>
-                    <li>Wszystko co w planie Free, oraz:</li>
-                    <li>Zaawansowane filtry (np. po nastroju)</li>
-                    <li>Specjalne odznaki profilowe</li>
-                    <li>Brak reklam</li>
-                    <li>Możliwość tworzenia spotkań prywatnych</li>
-                </ul>
-                <div id="premium-early-access">
-                    <div id="progress-bar-container">
-                        <div id="progress-bar"></div>
-                    </div>
-                    <button id="charge-button">Naładuj Hype!</button>
-                    <form id="early-access-form">
-                        <p>Dzięki! Zapisano na listę.</p>
-                        <input type="email" placeholder="zostaw maila (opcjonalnie)">
-                        <button type="submit" class="cta-button">Gotowe</button>
-                    </form>
+            <div class="billing-toggle">
+                <span>Miesięcznie</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="period-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Rocznie</span>
+            </div>
+            <div class="plan-details">
+                <div class="price-display">
+                    <div class="price" id="price-el">9.99 zł</div>
+                    <div class="period" id="period-el">/ miesiąc</div>
                 </div>
+                <div class="savings" id="savings-el"></div>
+                <ul style="list-style: none; padding-left: 0; text-align: center; opacity: 0.8;">
+                    <li>✔ Wszystkie funkcje Premium</li>
+                    <li>✔ Dostęp do ekskluzywnych wydarzeń</li>
+                    <li>✔ Wsparcie priorytetowe</li>
+                </ul>
             </div>
+            <form id="payment-form" class="payment-form">
+                <div class="form-group">
+                    <label for="email">Adres e-mail</label>
+                    <input type="email" id="email" placeholder="ty@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="card-element">Dane karty płatniczej</label>
+                    <div id="card-element"></div>
+                    <div id="card-errors" role="alert"></div>
+                </div>
+                <button class="submit-btn" id="submit-btn">Zapłać</button>
+            </form>
         </div>
-        <div class="back-link">
-            <a href="index.html">Powrót na stronę główną</a>
+        <div class="success-message" id="success-view">
+            <h2>Płatność udana!</h2>
+            <p>Twój klucz aktywacyjny został wysłany na podany adres e-mail. Możesz go również skopiować poniżej:</p>
+            <div id="license-key"></div>
+            <a href="index.html" class="back-link">Powrót na stronę główną</a>
         </div>
     </div>
 
     <script>
-        const chargeButton = document.getElementById('charge-button');
-        const progressBar = document.getElementById('progress-bar');
-        const earlyAccessForm = document.getElementById('early-access-form');
-        let charge = 0;
+        document.addEventListener('DOMContentLoaded', () => {
+            // WAŻNE: Zastąp ten klucz swoim własnym kluczem publicznym Stripe!
+            const stripe = Stripe('pk_test_51H5a4QF1a32f24fA5Wf2a1a2b3b4c5c6d7d8e9f0g1h2i3j4k5l6m7n8o9p0q1r2s3t4u5v6w');
+            
+            const elements = stripe.elements();
+            const cardElement = elements.create('card', {
+                style: {
+                    base: {
+                        color: '#fff',
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                        fontSmoothing: 'antialiased',
+                        fontSize: '16px',
+                        '::placeholder': {
+                            color: '#777'
+                        }
+                    },
+                    invalid: {
+                        color: '#ff4d4d',
+                        iconColor: '#ff4d4d'
+                    }
+                }
+            });
+            cardElement.mount('#card-element');
 
-        chargeButton.addEventListener('click', () => {
-            charge += 10;
-            if (charge > 100) charge = 100;
-            progressBar.style.width = charge + '%';
+            const periodToggle = document.getElementById('period-toggle');
+            const priceEl = document.getElementById('price-el');
+            const periodEl = document.getElementById('period-el');
+            const savingsEl = document.getElementById('savings-el');
+            const form = document.getElementById('payment-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const cardErrors = document.getElementById('card-errors');
+            const paymentView = document.getElementById('payment-view');
+            const successView = document.getElementById('success-view');
+            const licenseKeyEl = document.getElementById('license-key');
 
-            if (charge >= 100) {
-                chargeButton.style.display = 'none';
-                earlyAccessForm.style.display = 'block';
+            const prices = { monthly: 9.99, yearly: 83.99 };
+
+            function updatePrice() {
+                const isYearly = periodToggle.checked;
+                priceEl.textContent = isYearly ? `${prices.yearly} zł` : `${prices.monthly} zł`;
+                periodEl.textContent = isYearly ? '/ rok' : '/ miesiąc';
+                savingsEl.textContent = isYearly ? `Oszczędzasz 30%!` : '';
             }
+
+            periodToggle.addEventListener('change', updatePrice);
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Przetwarzanie...';
+
+                const { paymentMethod, error } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                    billing_details: {
+                        email: document.getElementById('email').value,
+                    },
+                });
+
+                if (error) {
+                    cardErrors.textContent = error.message;
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Zapłać';
+                } else {
+                    cardErrors.textContent = '';
+                    // --- INTEGRACJA Z BACKENDEM ---
+                    // To jest miejsce, gdzie frontend wysyła dane do Twojego serwera.
+                    // Programista backendu musi stworzyć endpoint, np. '/create-subscription'.
+                    console.log('PaymentMethod ID:', paymentMethod.id);
+                    console.log('Email:', paymentMethod.billing_details.email);
+                    console.log('Plan:', periodToggle.checked ? 'yearly' : 'monthly');
+
+                    // fetch('/create-subscription', {
+                    //     method: 'POST',
+                    //     headers: { 'Content-Type': 'application/json' },
+                    //     body: JSON.stringify({
+                    //         paymentMethodId: paymentMethod.id,
+                    //         email: paymentMethod.billing_details.email,
+                    //         plan: periodToggle.checked ? 'yearly' : 'monthly'
+                    //     })
+                    // }).then(response => response.json()).then(data => {
+                    //     if(data.success) {
+                    //         // Płatność udana, pokaż ekran sukcesu
+                    //     } else {
+                    //         // Błąd po stronie serwera
+                    //     }
+                    // });
+                    // --- KONIEC INTEGRACJI Z BACKENDEM ---
+
+                    // Symulacja sukcesu po 2 sekundach
+                    setTimeout(() => {
+                        paymentView.style.display = 'none';
+                        successView.style.display = 'block';
+                        licenseKeyEl.textContent = `MEETLY-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+                    }, 2000);
+                }
+            });
+
+            updatePrice();
         });
     </script>
 </body>
