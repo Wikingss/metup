@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cennik – Meetly Now</title>
+    <meta name="description" content="Poznaj plany cenowe aplikacji Meetly Now. Zacznij za darmo lub wybierz opcję Premium, aby uzyskać dostęp do dodatkowych funkcji.">
+    <meta name="theme-color" content="#000000">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='%2300ffff' stroke-width='10'/%3E%3C/svg%3E">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --neon-glow: 0 0 8px rgba(0, 255, 255, 0.9), 0 0 20px rgba(0, 255, 255, 0.7), 0 0 40px rgba(0, 255, 255, 0.5);
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        h1 { color: #00ffff; }
+        .pricing-wrapper { 
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem; 
+            margin-top: 3rem;
+        }
+        .price-card {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .price-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .price-card h3 { color: #00ffff; font-size: 1.8rem; }
+        .price-card .price { font-size: 3.5rem; font-weight: 700; margin: 1rem 0; }
+        .price-card ul {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+            flex-grow: 1;
+        }
+        .price-card li {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .price-card li::before {
+            content: '✔';
+            color: #00ffff;
+            position: absolute;
+            left: 0;
+        }
+        .cta-button {
+            background: #00ffff;
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            text-decoration: none;
+            box-shadow: var(--neon-glow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block;
+            text-align: center;
+            margin-top: auto;
+        }
+        .cta-button:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 10px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.6);
+        }
+        .back-link {
+            display: block;
+            margin-top: 3rem;
+            text-align: center;
+        }
+        .back-link a {
+            color: #aaa;
+            text-decoration: none;
+        }
+        .back-link a:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cennik</h1>
+        <h2>Zacznij za darmo. Na zawsze.</h2>
+        <div class="pricing-wrapper">
+            <div class="price-card">
+                <h3>Free</h3>
+                <div class="price">0 zł</div>
+                <ul>
+                    <li>Nielimitowane dołączanie do spotkań</li>
+                    <li>Tworzenie własnych spotkań</li>
+                    <li>Podstawowe filtry wyszukiwania</li>
+                    <li>Dostęp do mapy wydarzeń</li>
+                </ul>
+                <a href="index.html#story4" class="cta-button">Pobierz aplikację</a>
+            </div>
+            <div class="price-card">
+                <h3>Premium</h3>
+                <div class="price">Wkrótce</div>
+                <ul>
+                    <li>Wszystko co w planie Free, oraz:</li>
+                    <li>Zaawansowane filtry (np. po nastroju)</li>
+                    <li>Specjalne odznaki profilowe</li>
+                    <li>Brak reklam</li>
+                    <li>Możliwość tworzenia spotkań prywatnych</li>
+                </ul>
+                <a href="#" class="cta-button" style="background: #555; color: #fff; cursor: not-allowed; box-shadow: none;">Niedostępne</a>
+            </div>
+        </div>
+        <div class="back-link">
+            <a href="index.html">Powrót na stronę główną</a>
+        </div>
+    </div>
+</body>
+</html>
