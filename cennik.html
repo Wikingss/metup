@@ -101,6 +101,61 @@
         .back-link a:hover {
             color: #fff;
         }
+
+        /* Gamified Waiting List */
+        #premium-early-access {
+            margin-top: auto;
+            text-align: center;
+        }
+        #charge-button {
+            background: #ff00ff;
+            color: #fff;
+            box-shadow: 0 0 15px #ff00ff;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        #charge-button:active {
+            transform: scale(0.95);
+        }
+        #progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #ff00ff;
+            border-radius: 5px;
+            transition: width 0.2s linear;
+        }
+        #early-access-form {
+            display: none;
+            margin-top: 1rem;
+        }
+        #early-access-form input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background: #222;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        #early-access-form button {
+            width: 100%;
+        }
+
     </style>
 </head>
 <body>
@@ -129,12 +184,40 @@
                     <li>Brak reklam</li>
                     <li>Możliwość tworzenia spotkań prywatnych</li>
                 </ul>
-                <a href="#" class="cta-button" style="background: #555; color: #fff; cursor: not-allowed; box-shadow: none;">Niedostępne</a>
+                <div id="premium-early-access">
+                    <div id="progress-bar-container">
+                        <div id="progress-bar"></div>
+                    </div>
+                    <button id="charge-button">Naładuj Hype!</button>
+                    <form id="early-access-form">
+                        <p>Dzięki! Zapisano na listę.</p>
+                        <input type="email" placeholder="zostaw maila (opcjonalnie)">
+                        <button type="submit" class="cta-button">Gotowe</button>
+                    </form>
+                </div>
             </div>
         </div>
         <div class="back-link">
             <a href="index.html">Powrót na stronę główną</a>
         </div>
     </div>
+
+    <script>
+        const chargeButton = document.getElementById('charge-button');
+        const progressBar = document.getElementById('progress-bar');
+        const earlyAccessForm = document.getElementById('early-access-form');
+        let charge = 0;
+
+        chargeButton.addEventListener('click', () => {
+            charge += 10;
+            if (charge > 100) charge = 100;
+            progressBar.style.width = charge + '%';
+
+            if (charge >= 100) {
+                chargeButton.style.display = 'none';
+                earlyAccessForm.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>

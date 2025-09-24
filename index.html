@@ -7,6 +7,8 @@
     <meta name="description" content="Otwierasz aplikację – widzisz, gdzie dzieje się spotkanie. Pobierz Meetly Now i wejdź do gry.">
     <meta name="keywords" content="meetly, meetly now, spotkania, impreza, na żywo, teraz, okolica, aplikacja, social">
     <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='%2300ffff' stroke-width='10'/%3E%3C/svg%3E">
 
     <!-- Open Graph / Facebook -->
@@ -33,18 +35,27 @@
 
     <style>
         :root {
-            --neon-glow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 25px rgba(0, 255, 255, 0.6), 0 0 50px rgba(0, 255, 255, 0.4);
+            --bg-color: #000;
+            --text-color: #fff;
+            --glow-color: rgba(0, 255, 255, 0.8);
+            --neon-glow: 0 0 10px var(--glow-color), 0 0 25px var(--glow-color), 0 0 50px var(--glow-color);
             --phone-rotate-x: 0deg;
             --phone-rotate-y: 0deg;
+        }
+        body.day-theme {
+            --bg-color: #f0f2f5;
+            --text-color: #333;
+            --glow-color: rgba(255, 0, 128, 0.8);
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { font-size: 16px; }
         body {
-            background-color: #000;
-            color: #fff;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             overscroll-behavior-y: contain;
             overflow-x: hidden;
+            transition: background-color 0.5s, color 0.5s;
         }
         #page-wrapper {
             height: 100vh;
@@ -71,12 +82,17 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.8) 100%);
-            z-index: 1;
+            z-index: 0;
+            transition: background 0.5s;
+        }
+        body.day-theme .story::before {
+             background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.8) 100%);
         }
         .story-content {
             position: relative;
             z-index: 2;
-            max-width: 600px;
+            width: 100%;
+            max-width: 1100px;
         }
         h1, h2 {
             font-weight: 700;
@@ -88,6 +104,10 @@
         p { font-size: clamp(1rem, 2.5vw, 1.2rem); opacity: 0.9; margin-top: 1rem; }
 
         /* Story 1: Hero */
+        #story1 {
+            background: url('https://meetlynow.app/bg/1.jpg') no-repeat center center;
+            background-size: cover;
+        }
         #story1 #video-bg {
             position: absolute;
             top: 50%; left: 50%;
@@ -102,215 +122,99 @@
         #story1 h1 { animation: pulse-text 3s infinite ease-in-out; }
 
         /* Story 2: 3D Phone */
+        #story2 {
+            background: url('https://meetlynow.app/bg/2.jpg') no-repeat center center;
+            background-size: cover;
+        }
+        #story2 .story-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4rem;
+        }
+        #phone-container {
+            flex-shrink: 0;
+        }
         #phone-perspective { perspective: 1500px; }
         #phone-3d {
             width: 280px; height: 570px;
             transform-style: preserve-3d;
             transform: rotateX(var(--phone-rotate-x)) rotateY(var(--phone-rotate-y));
             transition: transform 0.1s ease-out;
-            position: relative;
         }
-        .phone-frame {
-            width: 100%; height: 100%;
-            background: #111;
-            border-radius: 45px;
-            border: 2px solid #555;
-            box-shadow: 0 0 30px rgba(0,0,0,0.7), inset 0 0 8px rgba(255,255,255,0.1);
-            padding: 15px;
+        .phone-frame { width: 100%; height: 100%; background: #111; border-radius: 45px; border: 2px solid #555; box-shadow: 0 0 30px rgba(0,0,0,0.7), inset 0 0 8px rgba(255,255,255,0.1); padding: 15px; }
+        .phone-screen { width: 100%; height: 100%; background: url('https://meetlynow.app/phone-screen.png') no-repeat center center; background-size: cover; border-radius: 30px; box-shadow: 0 0 25px 5px var(--glow-color); animation: pulse-glow-screen 4s infinite; }
+        #phone-description {
+            text-align: left;
+            max-width: 400px;
         }
-        .phone-screen {
-            width: 100%; height: 100%;
-            background: url('https://meetlynow.app/phone-screen.png') no-repeat center center;
-            background-size: cover;
-            border-radius: 30px;
-            box-shadow: 0 0 25px 5px rgba(0, 255, 255, 0.25);
-            animation: pulse-glow-screen 4s infinite;
+        #phone-description h3 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 1rem;
         }
 
-        /* Story 3: Live Bubble */
-        #story3 .story-content {
-            background: url('https://meetlynow.app/bg/3.jpg') no-repeat center center;
-            background-size: cover;
-            padding: 4rem 2rem;
-            border-radius: 20px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        @media (max-width: 900px) {
+            #story2 .story-content {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            #phone-description { text-align: center; }
         }
+
+        /* Story Timeline */
+        #story-timeline .timeline {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            padding: 2rem 0;
+            border-left: 3px solid var(--text-color);
+            margin: 0 auto;
+        }
+        .timeline-item { position: relative; padding-left: 2.5rem; margin-bottom: 2rem; opacity: 0; transform: translateX(-20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .timeline-item.visible { opacity: 1; transform: translateX(0); }
+        .timeline-dot { position: absolute; left: -9px; top: 5px; width: 15px; height: 15px; border-radius: 50%; background: var(--glow-color); box-shadow: var(--neon-glow); }
+        .timeline-item::before { content: attr(data-time); position: absolute; left: 2.5rem; top: -1.5rem; font-weight: bold; font-size: 1.2rem; }
 
         /* Story 4: Final CTA */
         #story4 { background: url('https://meetlynow.app/bg/4.jpg') no-repeat center center; background-size: cover; }
-        #qr-code {
+        #social-proof {
             margin-top: 2rem;
-            padding: 10px;
-            background: #fff;
-            border-radius: 16px;
-            display: inline-block;
-            animation: pulse-qr 2.5s infinite;
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
+        #social-proof #user-counter {
+            font-weight: bold;
+            color: var(--glow-color);
+            text-shadow: 0 0 8px var(--glow-color);
+        }
+        #qr-code { margin-top: 2rem; padding: 10px; background: #fff; border-radius: 16px; display: inline-block; animation: pulse-qr 2.5s infinite; }
         #qr-code img { display: block; width: 160px; height: 160px; }
-        .store-badges { margin-top: 2rem; display: flex; justify-content: center; gap: 1rem; }
+        .store-badges { margin-top: 1rem; display: flex; justify-content: center; gap: 1rem; }
         .store-badges img { height: 50px; transition: transform 0.2s; }
         .store-badges img:hover { transform: scale(1.05); }
 
         /* CTA Button */
-        .cta-button {
-            background: #00ffff;
-            color: #000;
-            border: none;
-            border-radius: 50px;
-            padding: 1rem 3rem;
-            font-size: 1.4rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-            text-decoration: none;
-            margin-top: 2rem;
-            display: inline-block;
-            box-shadow: var(--neon-glow);
-            transition: transform 0.2s, box-shadow 0.3s;
-            animation: pulse-button 2s infinite 1s;
-        }
-        .cta-button:hover, .cta-button:focus {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 1), 0 0 40px rgba(0, 255, 255, 0.9), 0 0 80px rgba(0, 255, 255, 0.7);
-        }
-
-        /* Live Bubble */
-        #live-bubble {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            background: rgba(20, 20, 20, 0.7);
-            backdrop-filter: blur(12px);
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            font-size: 0.95rem;
-            z-index: 100;
-            white-space: nowrap;
-            pointer-events: none;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s;
-            opacity: 0;
-        }
-        #live-bubble.visible {
-            transform: translateX(-50%) scale(1);
-            opacity: 1;
-        }
-
-        /* Sound Toggle */
-        #sound-toggle {
-            position: fixed; top: 20px; right: 20px;
-            background: rgba(30, 30, 30, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            width: 44px; height: 44px;
-            cursor: pointer; z-index: 100;
-            backdrop-filter: blur(5px);
-            display: flex; justify-content: center; align-items: center;
-        }
-        #sound-toggle svg { width: 24px; height: 24px; fill: #fff; }
-
-        /* Cursor Glow */
-        #cursor-glow {
-            position: fixed;
-            width: 50px; height: 50px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,255,255,0.4) 0%, rgba(0,255,255,0) 60%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            transition: width 0.3s, height 0.3s, opacity 0.3s;
-            display: none;
-        }
-        @media (pointer: fine) { #cursor-glow { display: block; } }
-
-        /* Particle Snow */
-        #particle-container {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100vh;
-            pointer-events: none; z-index: 3;
-        }
-        .particle {
-            position: absolute;
-            background-color: #fff;
-            border-radius: 50%;
-            animation: fall linear infinite;
-            opacity: 0;
-        }
-        @keyframes fall {
-            0% { transform: translateY(-10vh) scale(1); opacity: 1; }
-            100% { transform: translateY(110vh) scale(0.5); opacity: 0; }
-        }
-
-        /* Cookie Banner */
-        #cookie-banner {
-            position: fixed; bottom: -100%; left: 0; right: 0;
-            background: rgba(0,0,0,0.9);
-            padding: 1.5rem;
-            text-align: center;
-            z-index: 1001;
-            transition: bottom 0.5s ease-in-out;
-        }
-        #cookie-banner.show { bottom: 0; }
-        #cookie-banner p { margin-bottom: 1rem; }
-        .cookie-buttons button {
-            background: #00ffff; color: #000; border: none; border-radius: 20px;
-            padding: 0.6rem 1.2rem; font-size: 0.9rem; font-weight: 600; cursor: pointer;
-            margin: 0 0.5rem;
-        }
-        .cookie-buttons button#cookie-reject { background: #444; color: #fff; }
-
-        /* Animations */
-        @keyframes pulse-text {
-            0%, 100% { text-shadow: 0 0 20px rgba(0,0,0,0.9); }
-            50% { text-shadow: 0 0 20px rgba(0,0,0,0.9), 0 0 10px rgba(0, 255, 255, 0.8); }
-        }
-        @keyframes pulse-glow-screen {
-            0%, 100% { box-shadow: 0 0 25px 5px rgba(0, 255, 255, 0.25); }
-            50% { box-shadow: 0 0 40px 10px rgba(0, 255, 255, 0.4); }
-        }
-        @keyframes pulse-button {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-        }
-        @keyframes pulse-qr {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(255,255,255,0.3); }
-            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,255,255,0.6); }
-        }
-
-        /* Reduced Motion */
-        @media (prefers-reduced-motion: reduce) {
-            #video-bg, #particle-container { display: none; }
-            * { animation: none !important; transition: none !important; }
-        }
-        #page-wrapper::-webkit-scrollbar { display: none; }
-        #page-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
+        .cta-button { background: var(--glow-color); color: #000; border: none; border-radius: 50px; padding: 1rem 3rem; font-size: 1.4rem; font-weight: 700; cursor: pointer; text-transform: uppercase; text-decoration: none; margin-top: 2rem; display: inline-block; box-shadow: var(--neon-glow); transition: all 0.3s; }
+        .cta-button:hover, .cta-button:focus { transform: scale(1.05); box-shadow: 0 0 15px var(--glow-color), 0 0 40px var(--glow-color), 0 0 80px var(--glow-color); }
 
         /* Footer */
-        #main-footer {
-            background: #0a0a0a;
-            color: #888;
-            padding: 3rem 2rem;
-            text-align: center;
-            font-size: 0.9rem;
-            scroll-snap-align: end;
-        }
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .footer-links a {
-            color: #aaa;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .footer-links a:hover {
-            color: #00ffff;
-        }
+        #main-footer { background: #0a0a0a; color: #888; padding: 3rem 2rem; text-align: center; font-size: 0.9rem; scroll-snap-align: end; }
+        #meetly-stories { margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+        #meetly-stories h3 { font-size: 1.5rem; color: #fff; margin-bottom: 1.5rem; }
+        .story-carousel { position: relative; height: 100px; }
+        .story-card { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease-in-out; background: #1a1a1a; padding: 1.5rem; border-radius: 10px; border: 1px solid #333; }
+        .story-card.active { opacity: 1; }
+        .story-card p { font-style: italic; margin: 0; }
+        .story-card span { display: block; text-align: right; margin-top: 1rem; font-weight: bold; color: #00ffff; }
+
+        .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .footer-links a { color: #aaa; text-decoration: none; transition: color 0.2s; }
+        .footer-links a:hover { color: #00ffff; }
+        .footer-bottom { margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .lang-selector { display: flex; gap: 0.5rem; }
+        .lang-selector a { color: #666; text-decoration: none; font-weight: bold; padding: 0.2rem 0.4rem; border-radius: 4px; transition: all 0.2s; }
+        .lang-selector a.active, .lang-selector a:hover { color: #fff; background: #333; }
+
     </style>
 </head>
 <body>
@@ -335,19 +239,46 @@
 
             <section id="story2" class="story">
                 <div class="story-content">
-                    <h2>Otwierasz aplikację – widzisz, gdzie dzieje się spotkanie.</h2>
-                    <div id="phone-perspective">
-                        <div id="phone-3d">
-                            <div class="phone-frame"><div class="phone-screen"></div></div>
+                    <div id="phone-container">
+                        <div id="phone-perspective">
+                            <div id="phone-3d">
+                                <div class="phone-frame"><div class="phone-screen"></div></div>
+                            </div>
                         </div>
+                    </div>
+                    <div id="phone-description">
+                        <h3>Mapa spotkań na żywo</h3>
+                        <p>Otwierasz apkę i od razu widzisz, gdzie w Twojej okolicy coś się dzieje. Bez zbędnego przeglądania profili – po prostu dołącz do spotkania, które Cię interesuje.</p>
                     </div>
                 </div>
             </section>
 
-            <section id="story3" class="story">
+            <section id="story-timeline" class="story">
                 <div class="story-content">
-                    <h2>Kasia dołączyła do chillu w parku – 200 m od Ciebie</h2>
-                    <p>Dyskretne powiadomienia o tym, co dzieje się wokół. Bez spamu. Tylko realne okazje.</p>
+                    <h2>Jeden dzień z Meetly.</h2>
+                    <div class="timeline">
+                        <div class="timeline-item" data-time="18:00">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h3>Spontaniczna siatkówka</h3>
+                                <p>Znaleziono w parku, 300m od Ciebie.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item" data-time="21:00">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h3>Wieczór z planszówkami</h3>
+                                <p>W lokalnym pubie, dołącz do gry.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item" data-time="23:00">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h3>Afterparty po koncercie</h3>
+                                <p>Ekipa zbiera się pod klubem.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -355,6 +286,9 @@
                 <div class="story-content">
                     <h2>Pobierz aplikację i wejdź do gry.</h2>
                     <a href="https://apps.apple.com/pl/app/meetly-now/id6479093229" class="cta-button" id="cta-main">Dołącz teraz</a>
+                    <div id="social-proof">
+                        <p>Dołącz do <span id="user-counter">12,345</span> osób, które weszły do gry w tym tygodniu!</p>
+                    </div>
                     <div class="store-badges">
                         <a href="https://apps.apple.com/pl/app/meetly-now/id6479093229"><img src="https://meetlynow.app/badges/app-store.svg" alt="Pobierz z App Store"></a>
                         <a href="https://play.google.com/store/apps/details?id=com.wikingrams.meetlynow"><img src="https://meetlynow.app/badges/google-play.svg" alt="Pobierz z Google Play"></a>
@@ -367,13 +301,36 @@
         </div>
 
         <footer id="main-footer">
+            <div id="meetly-stories">
+                <h3>Historie z Meetly</h3>
+                <div class="story-carousel">
+                    <div class="story-card active">
+                        <p>"Poznałem całą ekipę na planszówkach. Najlepsza środa od miesięcy!"</p>
+                        <span>- Michał, 24</span>
+                    </div>
+                    <div class="story-card">
+                        <p>"Apka pokazała grilla na działkach obok. Skończyło się na śpiewaniu do rana."</p>
+                        <span>- Ania, 21</span>
+                    </div>
+                    <div class="story-card">
+                        <p>"Zobaczyłam, że ktoś gra w siatkę. Godzinę później byłam już w drużynie."</p>
+                        <span>- Kasia, 26</span>
+                    </div>
+                </div>
+            </div>
             <div class="footer-links">
                 <a href="cennik.html">Cennik</a>
                 <a href="polityka-prywatnosci.html">Polityka Prywatności</a>
                 <a href="regulamin.html">Regulamin</a>
                 <a href="wsparcie.html">Wsparcie</a>
             </div>
-            <p>&copy; 2025 Meetly Now. Wszelkie prawa zastrzeżone.</p>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Meetly Now. Wszelkie prawa zastrzeżone.</p>
+                <div class="lang-selector">
+                    <a href="#" class="active">PL</a>
+                    <a href="#">EN</a>
+                </div>
+            </div>
         </footer>
     </main>
 
@@ -394,7 +351,68 @@
         const body = document.body;
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        // --- COOKIE BANNER ---
+        // --- TIME OF DAY THEME ---
+        const hour = new Date().getHours();
+        if (hour > 6 && hour < 19) {
+            body.classList.add('day-theme');
+        }
+
+        // --- LANGUAGE DETECTION ---
+        const userLang = navigator.language || navigator.userLanguage;
+        if (!userLang.startsWith('pl')) {
+            console.log("User language is not Polish: " + userLang);
+        }
+
+        // --- COUNTER ANIMATION ---
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target.querySelector('#user-counter');
+                    if(counter) {
+                        const target = parseInt(counter.textContent.replace(/,/g, ''));
+                        let current = target - 200;
+                        const increment = () => {
+                            if (current < target) {
+                                current += 5;
+                                counter.textContent = Math.ceil(current).toLocaleString('pl-PL');
+                                setTimeout(increment, 10);
+                            }
+                        };
+                        increment();
+                        counterObserver.unobserve(entry.target);
+                    }
+                }
+            });
+        }, { threshold: 0.8 });
+        const story4 = document.getElementById('story4');
+        if(story4) counterObserver.observe(story4);
+
+        // --- TIMELINE ANIMATION ---
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.timeline-item').forEach((item, index) => {
+                        setTimeout(() => item.classList.add('visible'), index * 300);
+                    });
+                    timelineObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        const timeline = document.querySelector('.timeline');
+        if(timeline) timelineObserver.observe(timeline);
+
+        // --- MEETLY STORIES CAROUSEL ---
+        const storyCards = document.querySelectorAll('.story-card');
+        let currentStory = 0;
+        if (storyCards.length > 0) {
+            setInterval(() => {
+                storyCards[currentStory].classList.remove('active');
+                currentStory = (currentStory + 1) % storyCards.length;
+                storyCards[currentStory].classList.add('active');
+            }, 5000);
+        }
+
+        // --- The rest of the scripts from before ---
         const cookieBanner = document.getElementById('cookie-banner');
         const cookieAccept = document.getElementById('cookie-accept');
         const cookieReject = document.getElementById('cookie-reject');
@@ -416,7 +434,6 @@
             cookieBanner.classList.remove('show');
         });
 
-        // --- SOUND ---
         const audio = document.getElementById('background-beat');
         const soundToggle = document.getElementById('sound-toggle');
         const soundOnIcon = document.getElementById('sound-on-icon');
@@ -450,7 +467,6 @@
         document.addEventListener('click', playAudioOnFirstInteraction, { once: true });
         updateSoundUI();
 
-        // --- 3D PHONE ---
         const phone3d = document.getElementById('phone-3d');
         if (phone3d && !reducedMotion) {
             const story2 = document.getElementById('story2');
@@ -474,7 +490,6 @@
             });
         }
 
-        // --- LIVE BUBBLE ---
         const liveBubble = document.getElementById('live-bubble');
         const liveBubbleContent = document.getElementById('live-bubble-content');
         const notifications = [
@@ -508,7 +523,6 @@
             setInterval(cycleNotifications, 4000);
         }, 3000);
 
-        // --- PARTICLE SNOW ---
         if (!reducedMotion) {
             const particleContainer = document.getElementById('particle-container');
             const particleCount = 40;
@@ -525,7 +539,6 @@
             }
         }
 
-        // --- CURSOR GLOW ---
         const cursorGlow = document.getElementById('cursor-glow');
         if (cursorGlow && 'ontouchstart' in window === false) {
             window.addEventListener('mousemove', (e) => {
@@ -534,13 +547,13 @@
             });
         }
 
-        // --- HAPTIC FEEDBACK ---
         const ctaButton = document.getElementById('cta-main');
         ctaButton.addEventListener('click', () => {
             if (window.navigator.vibrate) {
                 window.navigator.vibrate(50);
             }
         });
+
     });
     </script>
 </body>
